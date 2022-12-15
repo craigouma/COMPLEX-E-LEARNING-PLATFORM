@@ -1,0 +1,34 @@
+//We can also track user downloads by storing the download information in a database table. 
+
+$db->exec('CREATE TABLE downloads (id INT(11) AUTO_INCREMENT PRIMARY KEY, user_id INT(11) NOT NULL, pdf_id INT(11) NOT NULL, timestamp DATETIME NOT NULL)');
+
+
+//To store a download record, we can create a download.php page that accepts the user_id and pdf_id as query parameters and inserts them into the downloads table.
+// Retrieve user_id and pdf_id from query parameters
+$user_id = $_GET['user_id'];
+$pdf_id = $_GET['pdf_id'];
+
+// Insert download record into the database
+$query = $db->prepare('INSERT INTO downloads (user_id, pdf_id, timestamp) VALUES (?, ?, NOW())');
+$query->execute([$user_id, $pdf_id]);
+
+//To display the number of downloads for each pdf, we can query the downloads table and count the number of records with the same pdf_id.
+// Query the downloads table and count the number of records with the same pdf_id
+$query = $db->prepare('SELECT COUNT(*) FROM downloads WHERE pdf_id = ?');
+$query->execute([$pdf_id]);
+$download_count = $query->fetchColumn();
+
+// Display the download count for the pdf
+echo '<p>Downloads: ' . $download_count . '</p>';
+
+//To allow users to rate and review pdfs, we can create a ratings and reviews table that stores the user_id, pdf_id, rating, and review for each record.
+$db->exec('CREATE TABLE ratings_and_reviews (id INT(11) AUTO_INCREMENT PRIMARY KEY, user_id INT(11) NOT NULL, pdf_id INT(11) NOT NULL, rating INT(1) NOT NULL, review TEXT NOT NULL)');
+
+//To display the average rating for each pdf, we can query the ratings and reviews table and calculate the average rating for the pdf.
+// Query the ratings and reviews table and calculate the average rating for the pdf
+$query = $db->prepare('SELECT AVG(rating) FROM ratings_and_reviews WHERE pdf_id = ?');
+$query->execute([$pdf_id]);
+$avg_rating = $query->fetchColumn();
+
+// Display the average rating for the pdf
+echo '<p>Average rating: ' . round($avg_rating, 1) . '</p>';
