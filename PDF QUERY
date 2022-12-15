@@ -1,0 +1,18 @@
+//Implement a system that displays a list of available pdfs on the website, organized by category.
+//To display a list of available pdfs, we can create a database table for storing pdf information, including the pdf name, category, and file path.
+
+$db->exec('CREATE TABLE pdfs (id INT(11) AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL, category VARCHAR(100) NOT NULL, file_path VARCHAR(255) NOT NULL)');
+
+//Then, we can query the pdfs table to retrieve a list of available pdfs and display them on the website.
+
+// Retrieve a list of available pdfs
+$query = $db->prepare('SELECT * FROM pdfs');
+$query->execute();
+$pdfs = $query->fetchAll();
+
+// Display a list of pdfs
+echo '<ul>';
+foreach ($pdfs as $pdf) {
+echo '<li><a href="' . $pdf['file_path'] . '">' . $pdf['name'] . '</a> (' . $pdf['category'] . ')</li>';
+}
+echo '</ul>';
