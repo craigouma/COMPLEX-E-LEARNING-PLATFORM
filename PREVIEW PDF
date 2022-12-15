@@ -1,12 +1,9 @@
-//Develop a system that allows users to view a preview of the pdfs before downloading them.
-//To allow users to view a preview of the pdfs, we can use a pdf viewer library, such as PDF.js, to display the pdf on the website.
-
 // Include the PDF.js library
-
 <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
-// Display the pdf preview
 
+// Display the pdf preview
 <div id="pdf-preview"></div>
+
 <script>
   // Create a new PDF.js object
   var pdf = new PDFJS();
@@ -20,4 +17,20 @@
       var viewport = page.getViewport(scale);
 
       // Create a canvas element for rendering the pdf preview
-      var canvas = document.
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      // Render the pdf on the canvas
+      var renderContext = {
+        canvasContext: context,
+        viewport: viewport
+      };
+      page.render(renderContext);
+
+      // Append the canvas to the pdf preview container
+      document.getElementById('pdf-preview').appendChild(canvas);
+    });
+  });
+</script>
