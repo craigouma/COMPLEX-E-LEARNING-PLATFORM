@@ -1,0 +1,36 @@
+//To send notifications to users when new pdfs are added to the website, we can use a messaging service, such as Twilio, to send SMS or email notifications to subscribed users.
+// Include the Twilio library
+require_once('path/to/twilio-php/Twilio/autoload.php');
+
+//Set Twilio credentials
+$sid = 'TWILIO_SID';
+$token = 'TWILIO_TOKEN';
+$twilio = new Twilio\Rest\Client($sid, $token);
+
+// Query the users table to retrieve a list of subscribed users
+$query = $db->prepare('SELECT * FROM users WHERE subscribed = 1');
+$query->execute();
+$users = $query->fetchAll();
+
+// Loop through the subscribed users and send a notification
+foreach ($users as $user) {
+if ($user['phone']) {
+// Send SMS notification
+$twilio->messages->create(
+$user['phone'],
+[
+'from' => 'TWILIO_PHONE',
+'body' => 'New pdfs added to the website: https://elearning.com/pdfs'
+]
+);
+} else {
+// Send email notification
+$twilio->messages->create(
+$user['email'],
+[
+'from' => 'TWILIO_EMAIL',
+'body' => 'New pdfs added to the website: https://elearning.com/pdfs'
+]
+);
+}
+}
